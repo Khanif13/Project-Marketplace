@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable implements MustVerifyEmail
+// implements MustVerifyEmail
+class User extends Authenticatable
 {
     use HasFactory, Notifiable, SoftDeletes;
 
@@ -21,7 +22,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password'          => 'hashed',
+        'password' => 'hashed',
     ];
 
     // --- Helpers ---
@@ -55,7 +56,9 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function bookmarkedListings()
     {
-        return $this->belongsToMany(Listing::class, 'bookmarks')->withTimestamps();
+        return $this->belongsToMany(Listing::class, 'bookmarks')
+            ->withPivot('created_at')
+            ->wherePivot('listing_id', '!=', null);
     }
 
     public function reports()

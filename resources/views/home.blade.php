@@ -5,99 +5,100 @@
 @section('content')
 
     {{-- ===================== HERO ===================== --}}
-    <section class="bg-[#0f0608]">
-        <div class="max-w-7xl mx-auto px-6 py-12 flex items-center justify-between gap-12">
+    <section class="bg-[#0f0608] relative overflow-hidden">
 
-            {{-- Kiri --}}
-            <div class="flex-1">
+        {{-- Background texture --}}
+        <div class="absolute inset-0 opacity-[0.03]"
+            style="background-image: radial-gradient(circle at 1px 1px, white 1px, transparent 0); background-size: 32px 32px;">
+        </div>
+
+        {{-- Glow --}}
+        <div
+            class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-[#7D1A2E]/20 rounded-full blur-[80px] pointer-events-none">
+        </div>
+
+        <div class="max-w-7xl mx-auto px-6 py-20 relative">
+            <div class="max-w-2xl mx-auto text-center">
+
                 <div
-                    class="inline-flex items-center gap-2 bg-[#7D1A2E]/20 border border-[#7D1A2E]/30 text-[#ff9a8e] text-xs font-semibold px-3 py-1.5 rounded-full mb-5 tracking-wide">
+                    class="inline-flex items-center gap-2 bg-[#7D1A2E]/20 border border-[#7D1A2E]/30 text-[#ff9a8e] text-xs font-semibold px-4 py-1.5 rounded-full mb-6 tracking-wide">
                     <i class="ti ti-rosette-discount-check"></i>
                     Platform UMKM Lokal Terverifikasi
                 </div>
-                <h1 class="text-4xl font-black text-white leading-tight tracking-tight mb-3">
-                    Temukan Produk Lokal<br>
-                    <span class="text-[#C0392B]">Terbaik</span> di Sekitarmu
+
+                <h1 class="text-5xl font-black text-white leading-tight tracking-tight mb-4">
+                    Jual & Beli Produk<br>
+                    <span class="text-[#C0392B]">Lokal</span> Lebih Mudah
                 </h1>
-                <p class="text-sm text-white/40 italic mb-8">
+
+                <p class="text-white/40 text-sm italic mb-3">
                     "Dari UMKM, oleh kita, untuk Indonesia"
                 </p>
-                <div class="flex items-center gap-3">
+
+                <p class="text-white/50 text-sm mb-10 leading-relaxed">
+                    Temukan produk UMKM terbaik di sekitarmu.<br>
+                    Hubungi penjual langsung via WhatsApp — gratis, mudah, cepat.
+                </p>
+
+                <div class="flex items-center justify-center gap-3 mb-10">
                     <a href="{{ route('listings.search') }}"
-                        class="inline-flex items-center gap-2 bg-[#7D1A2E] hover:bg-[#9B2035] text-white text-sm font-bold px-6 py-3 rounded-lg transition-colors">
+                        class="inline-flex items-center gap-2 bg-[#7D1A2E] hover:bg-[#9B2035] text-white text-sm font-bold px-8 py-3.5 rounded-xl transition-colors">
                         <i class="ti ti-compass"></i> Jelajahi Iklan
                     </a>
                     @guest
                         <a href="{{ route('seller.register') }}"
-                            class="inline-flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white/70 hover:text-white text-sm px-6 py-3 rounded-lg transition-all">
+                            class="inline-flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white/70 hover:text-white text-sm px-8 py-3.5 rounded-xl transition-all">
                             <i class="ti ti-store"></i> Jadi Penjual
                         </a>
                     @endguest
                 </div>
-            </div>
 
-            {{-- Kanan: Stats --}}
-            <div class="shrink-0 flex flex-col gap-3">
-                <div class="flex gap-3">
-                    <div class="bg-white/5 border border-white/8 rounded-xl px-6 py-4 text-center min-w-[110px]">
-                        <div class="text-2xl font-black text-white">{{ number_format($totalListings) }}</div>
-                        <div class="text-[10px] text-white/35 uppercase tracking-wider mt-1">Iklan Aktif</div>
-                    </div>
-                    <div class="bg-white/5 border border-white/8 rounded-xl px-6 py-4 text-center min-w-[110px]">
-                        <div class="text-2xl font-black text-white">{{ number_format($totalSellers) }}</div>
-                        <div class="text-[10px] text-white/35 uppercase tracking-wider mt-1">Penjual</div>
-                    </div>
-                    <div class="bg-white/5 border border-white/8 rounded-xl px-6 py-4 text-center min-w-[110px]">
-                        <div class="text-2xl font-black text-white">{{ number_format($totalCategories) }}</div>
-                        <div class="text-[10px] text-white/35 uppercase tracking-wider mt-1">Kategori</div>
-                    </div>
-                </div>
+                {{-- Search bar besar di hero --}}
+                <form action="{{ route('listings.search') }}" method="GET"
+                    class="flex bg-white/5 border border-white/10 rounded-2xl overflow-hidden h-14 max-w-xl mx-auto focus-within:border-[#7D1A2E]/50 transition-colors">
+                    <i class="ti ti-search text-white/30 text-base self-center ml-5"></i>
+                    <input type="text" name="q" value="{{ request('q') }}"
+                        placeholder="Cari produk, kategori, atau toko..."
+                        class="flex-1 bg-transparent px-4 text-sm text-white placeholder-white/25 outline-none">
+                    <button type="submit"
+                        class="bg-[#7D1A2E] hover:bg-[#9B2035] px-7 text-sm font-bold text-white transition-colors shrink-0 m-1.5 rounded-xl">
+                        Cari
+                    </button>
+                </form>
 
-                {{-- Banner Seller --}}
-                @guest
-                    <div
-                        class="bg-gradient-to-r from-[#7D1A2E]/40 to-[#3a0a14]/40 border border-[#7D1A2E]/25 rounded-xl px-5 py-4 flex items-center justify-between gap-6">
-                        <div>
-                            <p class="text-sm font-bold text-white">Punya produk UMKM?</p>
-                            <p class="text-xs text-white/40 mt-0.5">Daftar gratis, hubungi pembeli via WhatsApp</p>
-                        </div>
-                        <a href="{{ route('seller.register') }}"
-                            class="shrink-0 bg-[#7D1A2E] hover:bg-[#9B2035] text-white text-xs font-bold px-4 py-2 rounded-lg transition-colors whitespace-nowrap">
-                            Daftar →
-                        </a>
-                    </div>
-                @endguest
             </div>
         </div>
     </section>
 
     {{-- ===================== BODY ===================== --}}
     <div class="bg-[#f5f0ef] min-h-screen">
-        <div class="max-w-7xl mx-auto px-6 py-8">
+        <div class="max-w-7xl mx-auto px-6 py-10">
 
             {{-- KATEGORI --}}
-            <div class="mb-10">
-                <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-sm font-bold text-[#1a0a0e] flex items-center gap-2">
-                        <span class="w-1 h-4 bg-[#7D1A2E] rounded-full inline-block"></span>
-                        Kategori
-                    </h2>
+            @if ($categories->count())
+                <div class="mb-10">
+                    <div class="flex items-center justify-between mb-5">
+                        <h2 class="text-sm font-bold text-[#1a0a0e] flex items-center gap-2">
+                            <span class="w-1 h-4 bg-[#7D1A2E] rounded-full inline-block"></span>
+                            Kategori
+                        </h2>
+                    </div>
+                    <div class="grid grid-cols-7 gap-3">
+                        @foreach ($categories as $cat)
+                            <a href="{{ route('listings.category', $cat->slug) }}"
+                                class="bg-white border border-[#ede5e6] hover:border-[#7D1A2E] hover:bg-[#fff5f5] rounded-xl p-3 text-center transition-all group">
+                                <i class="ti {{ $cat->icon }} text-[22px] text-[#7D1A2E] block mb-2"></i>
+                                <span
+                                    class="text-[11px] text-[#555] font-medium group-hover:text-[#7D1A2E] transition-colors leading-tight">{{ $cat->name }}</span>
+                            </a>
+                        @endforeach
+                    </div>
                 </div>
-                <div class="grid grid-cols-7 gap-3">
-                    @foreach ($categories as $cat)
-                        <a href="{{ route('listings.category', $cat->slug) }}"
-                            class="bg-white border border-[#ede5e6] hover:border-[#7D1A2E] hover:bg-[#fff5f5] rounded-xl p-3 text-center transition-all group">
-                            <i class="ti {{ $cat->icon }} text-[22px] text-[#7D1A2E] block mb-2"></i>
-                            <span
-                                class="text-[11px] text-[#555] font-500 group-hover:text-[#7D1A2E] transition-colors">{{ $cat->name }}</span>
-                        </a>
-                    @endforeach
-                </div>
-            </div>
+            @endif
 
             {{-- IKLAN TERBARU --}}
             <div class="mb-10">
-                <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center justify-between mb-5">
                     <h2 class="text-sm font-bold text-[#1a0a0e] flex items-center gap-2">
                         <span class="w-1 h-4 bg-[#7D1A2E] rounded-full inline-block"></span>
                         Iklan Terbaru
@@ -111,17 +112,46 @@
                     @forelse($latestListings as $listing)
                         @include('partials.listing-card', ['listing' => $listing])
                     @empty
-                        <div class="col-span-4 text-center py-12 text-[#aaa] text-sm">
-                            Belum ada iklan tersedia.
+                        <div
+                            class="col-span-4 bg-white border border-dashed border-[#ede5e6] rounded-2xl py-16 text-center">
+                            <i class="ti ti-tag text-5xl text-[#ddd] block mb-3"></i>
+                            <p class="text-sm text-[#aaa]">Belum ada iklan tersedia.</p>
+                            @auth
+                                @if (auth()->user()->isSeller())
+                                    <a href="{{ route('listings.create') }}"
+                                        class="inline-flex items-center gap-2 mt-4 bg-[#7D1A2E] text-white text-xs font-semibold px-5 py-2.5 rounded-xl hover:bg-[#9B2035] transition-colors">
+                                        <i class="ti ti-plus"></i> Pasang Iklan Pertama
+                                    </a>
+                                @endif
+                            @endauth
                         </div>
                     @endforelse
                 </div>
             </div>
 
+            {{-- BANNER SELLER --}}
+            @guest
+                <div
+                    class="bg-[#0f0608] rounded-2xl p-8 mb-10 flex items-center justify-between gap-8 relative overflow-hidden">
+                    <div class="absolute inset-0 opacity-[0.04]"
+                        style="background-image: radial-gradient(circle at 1px 1px, white 1px, transparent 0); background-size: 24px 24px;">
+                    </div>
+                    <div class="relative">
+                        <p class="text-white font-black text-xl mb-2">Punya produk UMKM?</p>
+                        <p class="text-white/40 text-sm">Daftar jadi penjual, pasang iklan gratis, dan langsung terhubung ke
+                            pembeli via WhatsApp.</p>
+                    </div>
+                    <a href="{{ route('seller.register') }}"
+                        class="shrink-0 relative bg-[#7D1A2E] hover:bg-[#9B2035] text-white text-sm font-bold px-8 py-3.5 rounded-xl transition-colors whitespace-nowrap">
+                        Mulai Jual Sekarang →
+                    </a>
+                </div>
+            @endguest
+
             {{-- IKLAN POPULER --}}
             @if ($popularListings->count())
                 <div class="mb-10">
-                    <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center justify-between mb-5">
                         <h2 class="text-sm font-bold text-[#1a0a0e] flex items-center gap-2">
                             <span class="w-1 h-4 bg-[#7D1A2E] rounded-full inline-block"></span>
                             Iklan Populer

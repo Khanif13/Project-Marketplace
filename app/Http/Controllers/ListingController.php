@@ -177,7 +177,7 @@ class ListingController extends Controller
             ->orderBy('sort_order')
             ->with('parent')
             ->get()
-            ->groupBy(fn ($c) => $c->parent->name);
+            ->groupBy(fn($c) => $c->parent->name);
 
         return view('listings.create', compact('categories'));
     }
@@ -238,7 +238,7 @@ class ListingController extends Controller
             ->orderBy('sort_order')
             ->with('parent')
             ->get()
-            ->groupBy(fn ($c) => $c->parent->name);
+            ->groupBy(fn($c) => $c->parent->name);
 
         $listing->load('images');
 
@@ -344,11 +344,11 @@ class ListingController extends Controller
     private function uniqueSlug(string $title): string
     {
         $base = Str::slug($title);
-        $slug = $base.'-'.Str::lower(Str::random(6));
+        $slug = $base . '-' . Str::lower(Str::random(6));
 
         // Pastikan benar-benar unik
         while (Listing::where('slug', $slug)->exists()) {
-            $slug = $base.'-'.Str::lower(Str::random(6));
+            $slug = $base . '-' . Str::lower(Str::random(6));
         }
 
         return $slug;

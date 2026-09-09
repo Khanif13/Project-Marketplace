@@ -16,24 +16,29 @@
                 @csrf
                 @method('PUT')
 
-                {{-- Foto Existing --}}
+                {{-- FOTO --}}
                 <div class="bg-white rounded-2xl border border-[#ede5e6] p-6 mb-5">
                     <label class="block text-sm font-bold text-[#1a0a0e] mb-1">Foto Barang</label>
                     <p class="text-xs text-[#aaa] mb-4">Upload foto baru akan menggantikan semua foto lama.</p>
 
-                    {{-- Foto existing --}}
-                    @if ($listing->images->count() && !old('replace_images'))
-                        <div class="grid grid-cols-6 gap-2 mb-4">
+                    {{-- Input real yang disubmit --}}
+                    <input type="file" name="images[]" id="real-file-input" multiple accept="image/*" class="hidden">
+
+                    {{-- Foto lama --}}
+                    @if ($listing->images->count())
+                        <div class="grid grid-cols-6 gap-2 mb-3" x-show="previews.length === 0">
                             @foreach ($listing->images as $img)
                                 <div class="relative aspect-square rounded-xl overflow-hidden border-2 border-[#7D1A2E]/30">
                                     <img src="{{ Storage::url($img->path) }}" class="w-full h-full object-cover">
                                 </div>
                             @endforeach
                         </div>
-                        <p class="text-xs text-[#aaa] mb-3">Foto saat ini. Upload baru di bawah untuk menggantinya.</p>
+                        <p class="text-xs text-[#aaa] mb-3" x-show="previews.length === 0">
+                            Foto saat ini. Klik tombol di bawah untuk mengganti.
+                        </p>
                     @endif
 
-                    {{-- Upload baru --}}
+                    {{-- Preview foto baru --}}
                     <div class="grid grid-cols-6 gap-2">
                         <template x-for="(preview, index) in previews" :key="index">
                             <div class="relative aspect-square rounded-xl overflow-hidden border-2 border-[#7D1A2E]">
@@ -44,19 +49,21 @@
                                 </button>
                             </div>
                         </template>
+
                         <template x-if="previews.length < 6">
                             <label
                                 class="aspect-square rounded-xl border-2 border-dashed border-[#ede5e6] hover:border-[#7D1A2E] flex flex-col items-center justify-center cursor-pointer transition-colors">
                                 <i class="ti ti-plus text-xl text-[#ccc]"></i>
-                                <span class="text-[10px] text-[#ccc] mt-1">Ganti</span>
-                                <input type="file" name="images[]" multiple accept="image/*" class="hidden"
-                                    @change="handleImages">
+                                <span class="text-[10px] text-[#ccc] mt-1">
+                                    <span x-text="previews.length === 0 ? 'Ganti' : 'Tambah'"></span>
+                                </span>
+                                <input type="file" multiple accept="image/*" class="hidden" @change="handleImages">
                             </label>
                         </template>
                     </div>
                 </div>
 
-                {{-- Info Dasar --}}
+                {{-- INFO DASAR --}}
                 <div class="bg-white rounded-2xl border border-[#ede5e6] p-6 mb-5">
                     <h2 class="text-sm font-bold text-[#1a0a0e] mb-5 flex items-center gap-2">
                         <span class="w-1 h-4 bg-[#7D1A2E] rounded-full inline-block"></span>
@@ -120,7 +127,7 @@
                     </div>
                 </div>
 
-                {{-- Harga & Stok --}}
+                {{-- HARGA & STOK --}}
                 <div class="bg-white rounded-2xl border border-[#ede5e6] p-6 mb-5">
                     <h2 class="text-sm font-bold text-[#1a0a0e] mb-5 flex items-center gap-2">
                         <span class="w-1 h-4 bg-[#7D1A2E] rounded-full inline-block"></span>
@@ -155,7 +162,7 @@
                     </label>
                 </div>
 
-                {{-- Lokasi --}}
+                {{-- LOKASI --}}
                 <div class="bg-white rounded-2xl border border-[#ede5e6] p-6 mb-6">
                     <h2 class="text-sm font-bold text-[#1a0a0e] mb-5 flex items-center gap-2">
                         <span class="w-1 h-4 bg-[#7D1A2E] rounded-full inline-block"></span>
@@ -172,7 +179,7 @@
                     </div>
                 </div>
 
-                {{-- Submit --}}
+                {{-- SUBMIT --}}
                 <div class="flex items-center gap-3">
                     <button type="submit"
                         class="flex-1 bg-[#7D1A2E] hover:bg-[#9B2035] text-white font-bold text-sm py-3.5 rounded-xl transition-colors">
@@ -193,6 +200,8 @@
             function editForm() {
                 return {
                     previews: [],
+                    fileList: [],
+
                     handleImages(e) {
                         const newFiles = Array.from(e.target.files);
                         const remaining = 6 - this.previews.length;
@@ -200,11 +209,22 @@
                             const reader = new FileReader();
                             reader.onload = (ev) => this.previews.push(ev.target.result);
                             reader.readAsDataURL(file);
+                            this.fileList.push(file);
                         });
                         e.target.value = '';
+                        this.syncFiles();
                     },
+
                     removeImage(index) {
                         this.previews.splice(index, 1);
+                        this.fileList.splice(index, 1);
+                        this.syncFiles();
+                    },
+
+                    syncFiles() {
+                        const dt = new DataTransfer();
+                        this.fileList.forEach(f => dt.items.add(f));
+                        document.getElementById('real-file-input').files = dt.files;
                     }
                 }
             }

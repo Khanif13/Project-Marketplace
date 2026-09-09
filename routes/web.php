@@ -16,34 +16,41 @@ use App\Http\Controllers\SellerController;
 use Illuminate\Support\Facades\Route;
 
 // -------------------------------------------------------
-// PUBLIC
+// AUTH — di-handle Breeze
 // -------------------------------------------------------
-Route::get('/', [ListingController::class, 'index'])->name('home');
-Route::get('/listings/{listing:slug}', [ListingController::class, 'show'])->name('listings.show');
-Route::get('/categories/{category:slug}', [ListingController::class, 'byCategory'])->name('listings.category');
-Route::get('/search', [ListingController::class, 'search'])->name('listings.search');
+require __DIR__ . '/auth.php';
 
 // -------------------------------------------------------
-// AUTH (Laravel Breeze/Fortify akan generate ini,
-// tapi explisit di sini untuk kejelasan)
+// EMAIL VERIFICATION
 // -------------------------------------------------------
-// Route::get('/login', ...) dsb — di-handle Breeze
-
-// Email verification
 Route::get('/email/verify', [VerificationController::class, 'notice'])
     ->middleware('auth')
     ->name('verification.notice');
+
 Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])
     ->middleware(['auth', 'signed'])
     ->name('verification.verify');
+
 Route::post('/email/resend', [VerificationController::class, 'resend'])
     ->middleware(['auth', 'throttle:6,1'])
     ->name('verification.send');
 
 // -------------------------------------------------------
-// AUTHENTICATED (buyer + seller + admin)
+// PUBLIC
 // -------------------------------------------------------
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::get('/', [ListingController::class, 'index'])->name('home');
+Route::get('/search', [ListingController::class, 'search'])->name('listings.search');
+Route::get('/categories/{category:slug}', [ListingController::class, 'byCategory'])->name('listings.category');
+
+// -------------------------------------------------------
+// AUTHENTICATED — semua role
+// -------------------------------------------------------
+Route::middleware(['auth'])->group(function () {
+
+    // Profile
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Bookmark
     Route::post('/bookmarks/{listing}', [BookmarkController::class, 'toggle'])->name('bookmarks.toggle');
@@ -66,12 +73,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
 // -------------------------------------------------------
 // SELLER ONLY
 // -------------------------------------------------------
-Route::middleware(['auth', 'verified', 'role:seller'])->group(function () {
+Route::middleware(['auth', 'role:seller'])->group(function () {
 
-    // Dashboard seller
+    // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // CRUD Listing
+    // CRUD Listing — create HARUS sebelum {listing:slug}
     Route::get('/listings/create', [ListingController::class, 'create'])->name('listings.create');
     Route::post('/listings', [ListingController::class, 'store'])->name('listings.store');
     Route::get('/listings/{listing:slug}/edit', [ListingController::class, 'edit'])->name('listings.edit');
@@ -85,40 +92,39 @@ Route::middleware(['auth', 'verified', 'role:seller'])->group(function () {
 // -------------------------------------------------------
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
 
-    Route::get('/', fn () => redirect()->route('admin.users.index'));
+    Route::get('/', fn() => redirect()->route('admin.users.index'));
 
     // Users
-    Route::resource('users', AdminUserController::class)->only(['index', 'show', 'destroy']);
+    Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
+    Route::get('/users/{user}', [AdminUserController::class, 'show'])->name('users.show');
+    Route::delete('/users/{user}', [AdminUserController::class, 'destroy'])->name('users.destroy');
 
     // Listings
-    Route::resource('listings', AdminListingController::class)->only(['index', 'show', 'destroy']);
-    Route::patch('listings/{listing}/status', [AdminListingController::class, 'updateStatus'])->name('listings.status');
+    Route::get('/listings', [AdminListingController::class, 'index'])->name('listings.index');
+    Route::get('/listings/{listing}', [AdminListingController::class, 'show'])->name('listings.show');
+    Route::patch('/listings/{listing}/status', [AdminListingController::class, 'updateStatus'])->name('listings.status');
+    Route::delete('/listings/{listing}', [AdminListingController::class, 'destroy'])->name('listings.destroy');
 
     // Categories
-    Route::resource('categories', AdminCategoryController::class)->except(['show']);
+    Route::get('/categories', [AdminCategoryController::class, 'index'])->name('categories.index');
+    Route::get('/categories/create', [AdminCategoryController::class, 'create'])->name('categories.create');
+    Route::post('/categories', [AdminCategoryController::class, 'store'])->name('categories.store');
+    Route::get('/categories/{category}/edit', [AdminCategoryController::class, 'edit'])->name('categories.edit');
+    Route::put('/categories/{category}', [AdminCategoryController::class, 'update'])->name('categories.update');
+    Route::delete('/categories/{category}', [AdminCategoryController::class, 'destroy'])->name('categories.destroy');
 
     // Reports
-    Route::get('reports', [AdminReportController::class, 'index'])->name('reports.index');
-    Route::patch('reports/{report}/status', [AdminReportController::class, 'updateStatus'])->name('reports.status');
+    Route::get('/reports', [AdminReportController::class, 'index'])->name('reports.index');
+    Route::patch('/reports/{report}/status', [AdminReportController::class, 'updateStatus'])->name('reports.status');
 
-    // Seller verifications
-    Route::get('verifications', [AdminVerificationController::class, 'index'])->name('verifications.index');
-    Route::patch('verifications/{verification}/approve', [AdminVerificationController::class, 'approve'])->name('verifications.approve');
-    Route::patch('verifications/{verification}/reject', [AdminVerificationController::class, 'reject'])->name('verifications.reject');
+    // Seller Verifications
+    Route::get('/verifications', [AdminVerificationController::class, 'index'])->name('verifications.index');
+    Route::patch('/verifications/{verification}/approve', [AdminVerificationController::class, 'approve'])->name('verifications.approve');
+    Route::patch('/verifications/{verification}/reject', [AdminVerificationController::class, 'reject'])->name('verifications.reject');
 });
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
-
-require __DIR__.'/auth.php';
+// -------------------------------------------------------
+// PUBLIC — listings.show PALING BAWAH
+// supaya tidak menangkap /listings/create sebagai slug
+// -------------------------------------------------------
+Route::get('/listings/{listing:slug}', [ListingController::class, 'show'])->name('listings.show');
