@@ -55,11 +55,11 @@
 
                 {{-- Search bar besar di hero --}}
                 <form action="{{ route('listings.search') }}" method="GET"
-                    class="flex bg-white/5 border border-white/10 rounded-2xl overflow-hidden h-14 max-w-xl mx-auto focus-within:border-[#7D1A2E]/50 transition-colors">
-                    <i class="ti ti-search text-white/30 text-base self-center ml-5"></i>
+                    class="flex bg-white/8 border border-white/15 rounded-2xl overflow-hidden h-14 max-w-xl mx-auto transition-colors">
+                    <i class="ti ti-search text-white/40 text-base self-center ml-5"></i>
                     <input type="text" name="q" value="{{ request('q') }}"
                         placeholder="Cari produk, kategori, atau toko..."
-                        class="flex-1 bg-transparent px-4 text-sm text-white placeholder-white/25 outline-none">
+                        class="flex-1 bg-transparent px-4 text-sm text-white placeholder-white/30 outline-none border-none ring-0">
                     <button type="submit"
                         class="bg-[#7D1A2E] hover:bg-[#9B2035] px-7 text-sm font-bold text-white transition-colors shrink-0 m-1.5 rounded-xl">
                         Cari
