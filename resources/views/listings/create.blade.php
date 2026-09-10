@@ -22,8 +22,10 @@
                     <p class="text-xs text-[#aaa] mb-4">Minimal 1 foto, maksimal 6 foto. Format JPG/PNG, maks 2MB per foto.
                     </p>
 
+                    {{-- Input real yang disubmit --}}
+                    <input type="file" name="images[]" id="real-file-input" multiple accept="image/*" class="hidden">
+
                     <div class="grid grid-cols-6 gap-2">
-                        {{-- Preview gambar yang dipilih --}}
                         <template x-for="(preview, index) in previews" :key="index">
                             <div class="relative aspect-square rounded-xl overflow-hidden border-2 border-[#7D1A2E]">
                                 <img :src="preview" class="w-full h-full object-cover">
@@ -34,14 +36,12 @@
                             </div>
                         </template>
 
-                        {{-- Tombol tambah --}}
                         <template x-if="previews.length < 6">
                             <label
                                 class="aspect-square rounded-xl border-2 border-dashed border-[#ede5e6] hover:border-[#7D1A2E] flex flex-col items-center justify-center cursor-pointer transition-colors">
                                 <i class="ti ti-plus text-xl text-[#ccc]"></i>
                                 <span class="text-[10px] text-[#ccc] mt-1">Tambah</span>
-                                <input type="file" name="images[]" multiple accept="image/*" class="hidden"
-                                    @change="handleImages">
+                                <input type="file" multiple accept="image/*" class="hidden" @change="handleImages">
                             </label>
                         </template>
                     </div>
@@ -215,7 +215,7 @@
             function listingForm() {
                 return {
                     previews: [],
-                    files: [],
+                    fileList: [],
 
                     handleImages(e) {
                         const newFiles = Array.from(e.target.files);
@@ -224,14 +224,22 @@
                             const reader = new FileReader();
                             reader.onload = (ev) => this.previews.push(ev.target.result);
                             reader.readAsDataURL(file);
-                            this.files.push(file);
+                            this.fileList.push(file);
                         });
                         e.target.value = '';
+                        this.syncFiles();
                     },
 
                     removeImage(index) {
                         this.previews.splice(index, 1);
-                        this.files.splice(index, 1);
+                        this.fileList.splice(index, 1);
+                        this.syncFiles();
+                    },
+
+                    syncFiles() {
+                        const dt = new DataTransfer();
+                        this.fileList.forEach(f => dt.items.add(f));
+                        document.getElementById('real-file-input').files = dt.files;
                     }
                 }
             }

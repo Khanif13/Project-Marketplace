@@ -1,31 +1,34 @@
 <x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn\'t receive the email, we will gladly send you another.') }}
+    <div class="w-14 h-14 bg-[#7D1A2E]/20 rounded-full flex items-center justify-center mx-auto mb-5">
+        <i class="ti ti-mail text-2xl text-[#7D1A2E]"></i>
     </div>
 
-    @if (session('status') == 'verification-link-sent')
-        <div class="mb-4 font-medium text-sm text-green-600">
-            {{ __('A new verification link has been sent to the email address you provided during registration.') }}
+    <h1 class="text-xl font-black text-white text-center mb-2">Verifikasi Email</h1>
+    <p class="text-xs text-white/40 text-center mb-6 leading-relaxed">
+        Kami sudah mengirim link verifikasi ke
+        <span class="text-white/70 font-semibold">{{ auth()->user()->email }}</span>.
+        Cek inbox atau folder spam kamu.
+    </p>
+
+    @if (session('status') === 'verification-link-sent')
+        <div
+            class="bg-green-900/30 border border-green-500/20 text-green-400 text-xs px-4 py-3 rounded-xl mb-4 flex items-center gap-2">
+            <i class="ti ti-circle-check"></i> Link verifikasi berhasil dikirim ulang.
         </div>
     @endif
 
-    <div class="mt-4 flex items-center justify-between">
-        <form method="POST" action="{{ route('verification.send') }}">
-            @csrf
+    <form method="POST" action="{{ route('verification.send') }}">
+        @csrf
+        <button type="submit"
+            class="w-full bg-[#7D1A2E] hover:bg-[#9B2035] text-white font-bold text-sm py-3 rounded-xl transition-colors mb-3">
+            Kirim Ulang Email Verifikasi
+        </button>
+    </form>
 
-            <div>
-                <x-primary-button>
-                    {{ __('Resend Verification Email') }}
-                </x-primary-button>
-            </div>
-        </form>
-
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-
-            <button type="submit" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                {{ __('Log Out') }}
-            </button>
-        </form>
-    </div>
+    <form method="POST" action="{{ route('logout') }}">
+        @csrf
+        <button type="submit" class="w-full text-xs text-white/30 hover:text-white/60 transition-colors py-2">
+            Keluar dari akun ini
+        </button>
+    </form>
 </x-guest-layout>

@@ -33,19 +33,15 @@ class ListingController extends Controller
             ->take(8)
             ->get();
 
-        $totalListings = Listing::active()->count();
-        $totalSellers = User::where('role', 'seller')
-            ->where('seller_status', 'verified')
-            ->count();
-        $totalCategories = Category::whereNull('parent_id')->count();
+        // Eager load bookmarks user yang login
+        if (auth()->check()) {
+            auth()->user()->load('bookmarkedListings');
+        }
 
         return view('home', compact(
             'categories',
             'latestListings',
             'popularListings',
-            'totalListings',
-            'totalSellers',
-            'totalCategories'
         ));
     }
 
@@ -105,6 +101,9 @@ class ListingController extends Controller
         $listings = $query->paginate(16)->withQueryString();
         $categories = Category::whereNull('parent_id')->orderBy('sort_order')->get();
 
+        if (auth()->check()) {
+            auth()->user()->load('bookmarkedListings');
+        }
         return view('listings.search', compact('listings', 'categories'));
     }
 
@@ -122,7 +121,9 @@ class ListingController extends Controller
             ->paginate(16);
 
         $categories = Category::whereNull('parent_id')->orderBy('sort_order')->get();
-
+        if (auth()->check()) {
+            auth()->user()->load('bookmarkedListings');
+        }
         return view('listings.category', compact('listings', 'category', 'categories'));
     }
 
@@ -156,6 +157,10 @@ class ListingController extends Controller
             ->latest()
             ->take(4)
             ->get();
+
+        if (Auth::check()) {
+            Auth::user()->load('bookmarkedListings');
+        }
 
         $isBookmarked = Auth::check()
             && Auth::user()->bookmarkedListings->contains($listing->id);
