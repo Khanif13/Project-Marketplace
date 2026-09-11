@@ -16,20 +16,18 @@
             @if ($listings->count())
                 <div class="grid grid-cols-4 gap-4 mb-6">
                     @foreach ($listings as $listing)
-                        @include('partials.listing-card', ['listing' => $listing])
+                        <x-listing-card :listing="$listing" />
                     @endforeach
                 </div>
                 {{ $listings->links() }}
             @else
-                <div class="bg-white border border-dashed border-[#ede5e6] rounded-2xl p-16 text-center">
-                    <i class="ti ti-bookmark text-5xl text-[#ddd] block mb-4"></i>
-                    <p class="text-sm font-semibold text-[#888] mb-1">Belum ada iklan tersimpan</p>
-                    <p class="text-xs text-[#aaa] mb-6">Klik ikon bookmark di iklan untuk menyimpannya</p>
+                <x-empty-state icon="ti-bookmark" title="Belum ada iklan tersimpan"
+                    description="Klik ikon bookmark di iklan untuk menyimpannya">
                     <a href="{{ route('home') }}"
-                        class="inline-flex items-center gap-2 bg-[#7D1A2E] hover:bg-[#9B2035] text-white text-sm font-semibold px-6 py-2.5 rounded-xl transition-colors">
+                        class="inline-flex items-center gap-2 mt-2 bg-[#7D1A2E] hover:bg-[#9B2035] text-white text-sm font-semibold px-6 py-2.5 rounded-xl transition-colors">
                         <i class="ti ti-compass"></i> Jelajahi Iklan
                     </a>
-                </div>
+                </x-empty-state>
             @endif
 
         </div>

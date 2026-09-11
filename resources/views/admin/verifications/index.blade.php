@@ -7,15 +7,10 @@
 
     {{-- Stats --}}
     <div class="grid grid-cols-4 gap-4 mb-6">
-        @foreach ([['label' => 'Total', 'value' => $stats['total'], 'color' => 'text-[#7D1A2E]', 'icon' => 'ti-list'], ['label' => 'Pending', 'value' => $stats['pending'], 'color' => 'text-yellow-500', 'icon' => 'ti-clock'], ['label' => 'Approved', 'value' => $stats['approved'], 'color' => 'text-green-600', 'icon' => 'ti-circle-check'], ['label' => 'Rejected', 'value' => $stats['rejected'], 'color' => 'text-red-500', 'icon' => 'ti-circle-x']] as $s)
-            <div class="bg-white border border-[#ede5e6] rounded-2xl p-4">
-                <div class="flex items-center justify-between mb-2">
-                    <span class="text-xs text-[#aaa]">{{ $s['label'] }}</span>
-                    <i class="ti {{ $s['icon'] }} {{ $s['color'] }} text-base"></i>
-                </div>
-                <div class="text-2xl font-black text-[#1a0a0e]">{{ $s['value'] }}</div>
-            </div>
-        @endforeach
+        <x-stat-card label="Total" :value="$stats['total']" icon="ti-list" color="text-[#7D1A2E]" />
+        <x-stat-card label="Pending" :value="$stats['pending']" icon="ti-clock" color="text-yellow-500" />
+        <x-stat-card label="Approved" :value="$stats['approved']" icon="ti-circle-check" color="text-green-600" />
+        <x-stat-card label="Rejected" :value="$stats['rejected']" icon="ti-circle-x" color="text-red-500" />
     </div>
 
     {{-- Filter --}}

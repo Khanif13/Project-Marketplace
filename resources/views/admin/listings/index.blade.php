@@ -7,15 +7,10 @@
 
     {{-- Stats --}}
     <div class="grid grid-cols-4 gap-4 mb-6">
-        @foreach ([['label' => 'Total Iklan', 'value' => $stats['total'], 'color' => 'text-[#7D1A2E]', 'icon' => 'ti-layout-grid'], ['label' => 'Aktif', 'value' => $stats['active'], 'color' => 'text-green-600', 'icon' => 'ti-circle-check'], ['label' => 'Stok Habis', 'value' => $stats['empty'], 'color' => 'text-orange-500', 'icon' => 'ti-circle-minus'], ['label' => 'Nonaktif', 'value' => $stats['inactive'], 'color' => 'text-gray-400', 'icon' => 'ti-eye-off']] as $s)
-            <div class="bg-white border border-[#ede5e6] rounded-2xl p-4">
-                <div class="flex items-center justify-between mb-2">
-                    <span class="text-xs text-[#aaa]">{{ $s['label'] }}</span>
-                    <i class="ti {{ $s['icon'] }} {{ $s['color'] }} text-base"></i>
-                </div>
-                <div class="text-2xl font-black text-[#1a0a0e]">{{ $s['value'] }}</div>
-            </div>
-        @endforeach
+        <x-stat-card label="Total Iklan" :value="$stats['total']" icon="ti-layout-grid" color="text-[#7D1A2E]" />
+        <x-stat-card label="Aktif" :value="$stats['active']" icon="ti-circle-check" color="text-green-600" />
+        <x-stat-card label="Stok Habis" :value="$stats['empty']" icon="ti-circle-minus" color="text-orange-500" />
+        <x-stat-card label="Nonaktif" :value="$stats['inactive']" icon="ti-eye-off" color="text-gray-400" />
     </div>
 
     {{-- Filter --}}

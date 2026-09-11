@@ -7,15 +7,10 @@
 
     {{-- Stats --}}
     <div class="grid grid-cols-4 gap-4 mb-6">
-        @foreach ([['label' => 'Total', 'value' => $stats['total'], 'color' => 'text-[#7D1A2E]', 'icon' => 'ti-flag'], ['label' => 'Pending', 'value' => $stats['pending'], 'color' => 'text-orange-500', 'icon' => 'ti-clock'], ['label' => 'Reviewed', 'value' => $stats['reviewed'], 'color' => 'text-blue-500', 'icon' => 'ti-eye'], ['label' => 'Resolved', 'value' => $stats['resolved'], 'color' => 'text-green-600', 'icon' => 'ti-circle-check']] as $s)
-            <div class="bg-white border border-[#ede5e6] rounded-2xl p-4">
-                <div class="flex items-center justify-between mb-2">
-                    <span class="text-xs text-[#aaa]">{{ $s['label'] }}</span>
-                    <i class="ti {{ $s['icon'] }} {{ $s['color'] }} text-base"></i>
-                </div>
-                <div class="text-2xl font-black text-[#1a0a0e]">{{ $s['value'] }}</div>
-            </div>
-        @endforeach
+        <x-stat-card label="Total" :value="$stats['total']" icon="ti-flag" color="text-[#7D1A2E]" />
+        <x-stat-card label="Pending" :value="$stats['pending']" icon="ti-clock" color="text-orange-500" />
+        <x-stat-card label="Reviewed" :value="$stats['reviewed']" icon="ti-eye" color="text-blue-500" />
+        <x-stat-card label="Resolved" :value="$stats['resolved']" icon="ti-circle-check" color="text-green-600" />
     </div>
 
     {{-- Filter --}}
